@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="member_db@dhpxrestprod1" uuid="e8611ec2-abd6-4110-890b-834d7c25341d">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://dhpxrestprod1:5432/member_db</jdbc-url>
+    </data-source>
+  </component>
+</project>

@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@dweihdvx:1521:dweihdvx
+    username: smojum
+    password: <password>
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+  jpa:
+    generate-ddl: true
+    show-sql: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://dhpxrestuatx:8761/eureka/

@@ -1,0 +1,5 @@
+[Unit]
+Description=Run service every 10 minutes
+
+[Timer]
+OnCalendar=00/8:00

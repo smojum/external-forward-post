@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleLocalSettings">
+    <option name="projectSyncType">
+      <map>
+        <entry key="$PROJECT_DIR$/../apr-default-ui" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../automate-scripts/code-generation" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../codeset-UI-service" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../codeset-config-ui" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../codeset-load-service" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../codeset-repoload-service" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../codeset-repository-service" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../codeset-retrieve-service" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../enrollment/SsoRegLetters" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../grouper-ui-service" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../gs-crud-with-vaadin/complete" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-config-server" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-eob" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-gpcs-apr" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-gpcs-eapg" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-gpcs-schedule" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-identify-member" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-mtv-batch-rest" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-mtv-wrapper" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-service-registry" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-web-apr" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-web-eapg" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-web-rx" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../ms-xml-to-json" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../mtv-provider-import" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../processing/ms-edge-server" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../processing/ms-eob" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../processing/ms-provider-load" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../processing/ms-read-sp" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../processing/ms-web-contract" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../rx-recon-service" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$/../sso-data-sync" value="PREVIEW" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="width" value="1024" />
+    <option name="height" value="704" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+</project>
