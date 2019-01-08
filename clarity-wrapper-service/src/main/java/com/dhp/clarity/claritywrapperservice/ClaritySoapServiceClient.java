@@ -1,131 +1,137 @@
-package com.dhp.eob;
+package com.dhp.clarity.claritywrapperservice;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-
+import com.clarity.webservice.*;
+import javassist.NotFoundException;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.frontend.ClientProxy;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
-import com.clarity.webservice.AttributeValuePair;
-import com.clarity.webservice.ClarityService;
-import com.clarity.webservice.ClarityWebServiceSEI;
-import com.clarity.webservice.GetProductAsPDFRequest;
-import com.clarity.webservice.GetProductAsPDFResponse;
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
-@Component("eobSecureClarityDocumentClient")
-@Configuration
-@Import(EobSecureClarityDocumentConfiguration.class)
-public class EobSecureClarityDocumentClient {
+@Component
+public class ClaritySoapServiceClient {
 
-	private static final String WSU_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
-	private static final QName SERVICE_NAME = new QName("http://webservice.clarity.com/", "ClarityService");
-	
-	@Value("${clarity-wsdl}")
-	private String WSDL;
-	
-	@Value("${clarity-endpoint}")
-	private String ENDPOINT;
+    private static final QName SERVICE_NAME = new QName("http://webservice.clarity.com/", "ClarityService");
 
-	public byte[] getEobDocumentFromClarity(String memberId, String claimNumber, String processingDate) {
-		byte[] bFile = null;
-		SpringBusFactory bf = new SpringBusFactory();
-		URL busFile = EobSecureClarityDocumentClient.class.getResource("/clarity-cxf.xml");
-		Bus bus = bf.createBus(busFile.toString());
-		BusFactory.setDefaultBus(bus);
-		/*
-		Map<String, Object> outProps = new HashMap<String, Object>();
-		outProps.put(WSHandlerConstants.ACTION, "Signature Timestamp");
-		outProps.put(WSHandlerConstants.SIGNATURE_USER, "clarity-dvlx.deanhealthplan.com");
-		outProps.put("passwordCallbackClass", "demo.wssec.client.UTPasswordCallback");
-		outProps.put(WSHandlerConstants.SIG_PROP_FILE, "etc/dean-sign.properties");
-		outProps.put(WSHandlerConstants.SIG_KEY_ID, "DirectReference");
-		outProps.put(WSHandlerConstants.SIGNATURE_PARTS,
-				"{Content}{" + WSU_NS + "}Timestamp;" + "{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;");
+    @Value("${clarity-wsdl}")
+    private String WSDL;
 
-		outProps.put(WSHandlerConstants.SIG_ALGO, WSConstants.RSA);
-		outProps.put(WSHandlerConstants.SIG_DIGEST_ALGO, WSConstants.SHA1);
-		*/
-		URL wsdlURL = null;
-		try {
-			//TODO put in properties file
-//			WSDL = "https://api276.clarityssi.com/DeanHealthEOBWebService/wsdl/e_service.wsdl";
-//			WSDL = "https://api276uat.clarityssi.net:446/DeanHealthEOBWebService/services/ClarityServicePort?wsdl";
-			wsdlURL = new URL(WSDL);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+    @Value("${clarity-endpoint}")
+    private String ENDPOINT;
 
-		ClarityService ss = new ClarityService(wsdlURL, SERVICE_NAME);
-		ClarityWebServiceSEI port = ss.getClarityServicePort();
-		((BindingProvider)port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT);
-		org.apache.cxf.endpoint.Client client = ClientProxy.getClient(port);
-		client.getRequestContext().put("security.signature.properties", "props/dean-sign.properties");
-		client.getRequestContext().put("security.encryption.properties", "props/clarity-sign.properties");
-		client.getRequestContext().put("security.encryption.username", "clarity-prod");
-		client.getRequestContext().put("security.callback-handler", "com.dhp.eob.UTPasswordCallback");
+    private Bus bus;
 
-		System.out.println("Invoking getProductAsPDF...");
+    private ClarityWebServiceSEI port;
 
-		GetProductAsPDFRequest request = new GetProductAsPDFRequest();
-		List<AttributeValuePair> searchCriteria = request.getSearchCriteria();
+    private void open() {
+        SpringBusFactory bf = new SpringBusFactory();
+        URL busFile = ClaritySoapServiceClient.class.getResource("/clarity-cxf.xml");
+        bus = bf.createBus(busFile.toString());
+        BusFactory.setDefaultBus(bus);
+        URL wsdlURL = null;
+        try {
+            wsdlURL = new URL(WSDL);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        ClarityService ss = new ClarityService(wsdlURL, SERVICE_NAME);
+        port = ss.getClarityServicePort();
+        ((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT);
+        org.apache.cxf.endpoint.Client client = ClientProxy.getClient(port);
+        client.getRequestContext().put("security.signature.properties", "dean-sign.properties");
+        client.getRequestContext().put("security.encryption.properties", "clarity-sign.properties");
+        client.getRequestContext().put("security.callback-handler", "com.dhp.clarity.claritywrapperservice.UTPasswordCallback");
+    }
 
-		AttributeValuePair memberNum = new AttributeValuePair();
-		memberNum.setAttribute("member_num");
-		memberNum.setValue(memberId);
+    private void close() throws IOException {
+        if (port instanceof Closeable) {
+            ((Closeable) port).close();
+        }
+        bus.shutdown(true);
+    }
 
-		searchCriteria.add(memberNum);
+    public byte[] getEobDocumentFromClarity(String memberId, String claimNumber, String processingDate) throws IOException {
+        open();
+        byte[] bFile = null;
 
-		AttributeValuePair claimNum = new AttributeValuePair();
-		claimNum.setAttribute("clm_nbr_string");
-		claimNum.setValue(claimNumber);
+        GetProductAsPDFRequest request = new GetProductAsPDFRequest();
+        List<AttributeValuePair> searchCriteria = request.getSearchCriteria();
+        AttributeValuePair memberNum = new AttributeValuePair();
+        memberNum.setAttribute("member_num");
+        memberNum.setValue(memberId);
 
-		searchCriteria.add(claimNum);
+        searchCriteria.add(memberNum);
 
-		AttributeValuePair batchDate = new AttributeValuePair();
-		batchDate.setAttribute("batch_dt");
-		batchDate.setValue(EobDocumentUtil.formatDate(processingDate, "yyyyMMdd", "MM/dd/yyyy"));
+        AttributeValuePair claimNum = new AttributeValuePair();
+        claimNum.setAttribute("clm_nbr_string");
+        claimNum.setValue(claimNumber);
 
-		searchCriteria.add(batchDate);
+        searchCriteria.add(claimNum);
 
-		GetProductAsPDFResponse response = port.getProductAsPDF(request);
-		try {
-			if(response.getResults().size() == 0) {
-				return null;
-			}
-			bFile = EobDocumentUtil.toBytes(response.getResults().get(0).getProductPDF());
-			if (port instanceof Closeable) {
-				((Closeable) port).close();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        AttributeValuePair batchDate = new AttributeValuePair();
+        batchDate.setAttribute("batch_dt");
+        batchDate.setValue(formatDate(processingDate, "yyyyMMdd", "MM/dd/yyyy"));
 
-		bus.shutdown(true);
-		List<Integer> pageNumbers = new ArrayList<Integer>();
-		pageNumbers.add(2);
-		byte[] removedPage;
-		try {
-			removedPage = EobDocumentUtil.removePage(bFile, pageNumbers);
-		} catch (IOException e) {
-			removedPage = bFile;
-		}
-		return removedPage;
-	}
+        searchCriteria.add(batchDate);
 
+        GetProductAsPDFResponse response = port.getProductAsPDF(request);
+        if (response.getResults().size() == 0) {
+            return null;
+        }
+        bFile = toBytes(response.getResults().get(0).getProductPDF());
+        close();
+        return bFile;
+    }
+
+    public byte[] getProductAsPDF(GetProductAsPDFRequest request) throws IOException, NotFoundException {
+        open();
+        GetProductAsPDFResponse response = port.getProductAsPDF(request);
+        close();
+        if (response.getResults().size() == 0) {
+            throw new NotFoundException("No data found for request: " + request);
+        } else if (response.getResults().size() > 1) {
+            String output = "";
+            response.getResults().stream().forEach(element -> System.out.println(element));
+            throw new RuntimeException("Multiple document found. Please try with correct criteria.");
+        } else {
+            return toBytes(response.getResults().get(0).getProductPDF());
+        }
+    }
+
+
+    public static byte[] toBytes(DataHandler handler) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        handler.writeTo(output);
+        return output.toByteArray();
+    }
+
+    public static String formatDate(String inputDate, String inputFormat, String outputFormat) {
+        DateFormat originalFormat = new SimpleDateFormat(inputFormat, Locale.ENGLISH);
+        DateFormat targetFormat = new SimpleDateFormat(outputFormat);
+        Date date = null;
+        try {
+            date = originalFormat.parse(inputDate);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String formattedDate = targetFormat.format(date);
+        return formattedDate;
+    }
 }
