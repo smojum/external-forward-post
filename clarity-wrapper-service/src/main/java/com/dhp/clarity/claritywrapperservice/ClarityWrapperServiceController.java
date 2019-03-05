@@ -1,5 +1,6 @@
 package com.dhp.clarity.claritywrapperservice;
 
+import com.clarity.webservice.GetAvailableProductsResponse;
 import com.clarity.webservice.GetProductAsPDFRequest;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,4 +27,11 @@ public class ClarityWrapperServiceController {
     byte[] getProductAsPDF(@RequestBody GetProductAsPDFRequest request) throws IOException, NotFoundException {
         return client.getProductAsPDF(request);
     }
+
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, value = "invoice/{invoice_recipient_id}")
+    public @ResponseBody
+    GetAvailableProductsResponse getAvailableProductsRequest(@PathVariable("invoice_recipient_id") String invoiceRecipientId) throws IOException, NotFoundException {
+        return client.getAvailableProductsRequest(invoiceRecipientId);
+    }
+
 }

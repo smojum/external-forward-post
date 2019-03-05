@@ -114,14 +114,26 @@ public class ClaritySoapServiceClient {
         }
     }
 
+    public GetAvailableProductsResponse getAvailableProductsRequest(String invoiceRecipientId){
+        open();
+        GetAvailableProductsRequest request = new GetAvailableProductsRequest();
 
-    public static byte[] toBytes(DataHandler handler) throws IOException {
+        List<AttributeValuePair> searchCriteria = request.getRequest();
+        AttributeValuePair invoiceRecipientIdAttr = new AttributeValuePair();
+        invoiceRecipientIdAttr.setAttribute("Invoice_Recipient_ID");
+        invoiceRecipientIdAttr.setValue(invoiceRecipientId);
+        searchCriteria.add(invoiceRecipientIdAttr);
+        GetAvailableProductsResponse response = port.getAvailableProducts(request);
+        return response;
+    }
+
+    private static byte[] toBytes(DataHandler handler) throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         handler.writeTo(output);
         return output.toByteArray();
     }
 
-    public static String formatDate(String inputDate, String inputFormat, String outputFormat) {
+    private static String formatDate(String inputDate, String inputFormat, String outputFormat) {
         DateFormat originalFormat = new SimpleDateFormat(inputFormat, Locale.ENGLISH);
         DateFormat targetFormat = new SimpleDateFormat(outputFormat);
         Date date = null;
