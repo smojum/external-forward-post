@@ -28,10 +28,13 @@ public class ClarityWrapperServiceController {
         return client.getProductAsPDF(request);
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, value = "invoice/{invoice_recipient_id}")
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, value = "invoice")
     public @ResponseBody
-    GetAvailableProductsResponse getAvailableProductsRequest(@PathVariable("invoice_recipient_id") String invoiceRecipientId) throws IOException, NotFoundException {
-        return client.getAvailableProductsRequest(invoiceRecipientId);
+    GetAvailableProductsResponse getAvailableProductsRequest(@RequestParam(name = "invoice_recipient_id") String invoiceRecipientId,
+                                                             @RequestParam(name = "recipient_id", required = false) String recipientId,
+                                                             @RequestParam(name = "invoice_number", required = false) String invoiceNumber,
+                                                             @RequestParam(name = "invoice_date", required = false) String invoiceDate) throws IOException {
+        return client.getAvailableProductsRequest(invoiceRecipientId, recipientId, invoiceNumber, invoiceDate);
     }
 
 }

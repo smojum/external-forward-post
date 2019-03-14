@@ -2,6 +2,7 @@ package com.dhp.clarity.claritywrapperservice;
 
 import com.clarity.webservice.*;
 import javassist.NotFoundException;
+import lombok.extern.log4j.Log4j2;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Component
+@Log4j2
 public class ClaritySoapServiceClient {
 
     private static final QName SERVICE_NAME = new QName("http://webservice.clarity.com/", "ClarityService");
@@ -107,23 +109,51 @@ public class ClaritySoapServiceClient {
             throw new NotFoundException("No data found for request: " + request);
         } else if (response.getResults().size() > 1) {
             String output = "";
-            response.getResults().stream().forEach(element -> System.out.println(element));
+            response.getResults()
+                    .stream()
+                    .forEach(log::info);
             throw new RuntimeException("Multiple document found. Please try with correct criteria.");
         } else {
+            response.getResults().get(0).getSearchAVP()
+                    .stream()
+                    .forEach(log::info);
             return toBytes(response.getResults().get(0).getProductPDF());
         }
     }
 
-    public GetAvailableProductsResponse getAvailableProductsRequest(String invoiceRecipientId){
+    public GetAvailableProductsResponse getAvailableProductsRequest(String invoiceRecipientId, String recipientId,
+                                                                    String invoiceNumber,
+                                                                    String invoiceDate) throws IOException {
         open();
         GetAvailableProductsRequest request = new GetAvailableProductsRequest();
 
         List<AttributeValuePair> searchCriteria = request.getRequest();
+
         AttributeValuePair invoiceRecipientIdAttr = new AttributeValuePair();
         invoiceRecipientIdAttr.setAttribute("Invoice_Recipient_ID");
         invoiceRecipientIdAttr.setValue(invoiceRecipientId);
         searchCriteria.add(invoiceRecipientIdAttr);
+
+        if(recipientId != null) {
+            AttributeValuePair recipientIdAttr = new AttributeValuePair();
+            recipientIdAttr.setAttribute("Recipient_ID");
+            recipientIdAttr.setValue(invoiceRecipientId);
+            searchCriteria.add(recipientIdAttr);
+        }
+        if(invoiceNumber != null) {
+            AttributeValuePair invoiceNumberAttr = new AttributeValuePair();
+            invoiceNumberAttr.setAttribute("Invoice_Number");
+            invoiceNumberAttr.setValue(invoiceNumber);
+            searchCriteria.add(invoiceNumberAttr);
+        }
+        if(invoiceDate != null) {
+            AttributeValuePair invoiceDateAttr = new AttributeValuePair();
+            invoiceDateAttr.setAttribute("Invoice_Date");
+            invoiceDateAttr.setValue(invoiceDate);
+            searchCriteria.add(invoiceDateAttr);
+        }
         GetAvailableProductsResponse response = port.getAvailableProducts(request);
+        close();
         return response;
     }
 
