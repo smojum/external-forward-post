@@ -1,0 +1,142 @@
+{
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "NPI": {
+          "type": "text",
+          "copy_to": "npi"
+        },
+        "BIRTHDATE": {
+          "type": "date",
+          "copy_to": "dob",
+          "format": "m/d/yy"
+        },
+        "LAST NAME": {
+          "type": "text",
+          "copy_to": "last_name"
+        },
+        "GROUP NPI": {
+          "type": "text",
+          "copy_to": "group_npi"
+        },
+        "group_npi": {
+          "type": "keyword",
+          "store": true
+        },
+        "TAX ID": {
+          "type": "text",
+          "copy_to": "tax_id"
+        },
+        "tax_id": {
+          "type": "keyword",
+          "store": true
+        },
+        "GROUP NAME": {
+          "type": "text",
+          "copy_to": ["group_name", "group_name_keyword"]
+        },
+        "ClinicName": {
+          "type": "text",
+          "copy_to": ["group_name", "group_name_keyword"]
+        },        "group_name": {
+          "type": "text",
+          "store": true,
+          "fielddata": true
+        },
+        "group_name_keyword": {
+          "type": "keyword",
+          "store": true
+        },
+        "ADDRESS LINE 1": {
+          "type": "text",
+          "copy_to": "address_line_1"
+        },
+        "address_line_1": {
+          "type": "keyword",
+          "store": true
+        },
+        "Address": {
+          "type": "text",
+          "copy_to": "address_line_1"
+        },
+        "ADDRESS TYPE": {
+          "type": "text",
+          "copy_to": "address_type"
+        },
+        "address_type": {
+          "type": "keyword",
+          "store": true
+        },
+        "ADDRESS LINE 2": {
+          "type": "text",
+          "copy_to": "address_line_2"
+        },
+        "address_line_2": {
+          "type": "keyword",
+          "store": true
+        },
+        "CITY": {
+          "type": "text",
+          "copy_to": "city"
+        },
+        "City": {
+          "type": "text",
+          "copy_to": "city"
+        },
+        "city": {
+          "type": "keyword",
+          "store": true
+        },
+        "STATE": {
+          "type": "text",
+          "copy_to": "state"
+        },
+        "State": {
+          "type": "text",
+          "copy_to": "state"
+        },
+        "state": {
+          "type": "keyword",
+          "store": true
+        },
+        "ZIPCODE": {
+          "type": "text",
+          "copy_to": "zip"
+        },
+        "Zip": {
+          "type": "text",
+          "copy_to": "zip"
+        },
+        "zip": {
+          "type": "keyword",
+          "store": true
+        },
+        "PHONE": {
+          "type": "text",
+          "copy_to": "phone"
+        },
+        "Phone": {
+          "type": "text",
+          "copy_to": "phone"
+        },
+        "phone": {
+          "type": "keyword",
+          "store": true
+        },
+        "npi": {
+          "type": "keyword",
+          "store": true
+        },
+        "dob": {
+          "type": "date",
+          "format": "m/d/yy",
+          "store": true
+        },
+        "last_name": {
+          "type": "text",
+          "store": true
+        }
+      }
+    }
+  }
+}
